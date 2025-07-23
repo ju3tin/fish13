@@ -1,0 +1,113 @@
+{
+  "accounts": [
+    {
+      "name": "StakingState",
+      "type": {
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          }
+        ],
+        "kind": "struct"
+      }
+    }
+  ],
+  "instructions": [
+    {
+      "accounts": [
+        {
+          "isMut": true,
+          "isSigner": false,
+          "name": "stakingState"
+        },
+        {
+          "isMut": true,
+          "isSigner": true,
+          "name": "authority"
+        },
+        {
+          "isMut": false,
+          "isSigner": false,
+          "name": "systemProgram"
+        }
+      ],
+      "args": [
+        {
+          "name": "stakingBump",
+          "type": "u8"
+        }
+      ],
+      "name": "initialize"
+    },
+    {
+      "accounts": [
+        {
+          "isMut": true,
+          "isSigner": true,
+          "name": "user"
+        },
+        {
+          "isMut": true,
+          "isSigner": false,
+          "name": "userTokenAccount"
+        },
+        {
+          "isMut": true,
+          "isSigner": false,
+          "name": "stakingVault"
+        },
+        {
+          "isMut": false,
+          "isSigner": false,
+          "name": "tokenProgram"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ],
+      "name": "stake"
+    },
+    {
+      "accounts": [
+        {
+          "isMut": true,
+          "isSigner": false,
+          "name": "mint"
+        },
+        {
+          "isMut": true,
+          "isSigner": false,
+          "name": "stakingState"
+        },
+        {
+          "isMut": true,
+          "isSigner": false,
+          "name": "rewardTokenAccount"
+        },
+        {
+          "isMut": false,
+          "isSigner": true,
+          "name": "authority"
+        },
+        {
+          "isMut": false,
+          "isSigner": false,
+          "name": "tokenProgram"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ],
+      "name": "mintReward"
+    }
+  ],
+  "name": "staking_token",
+  "version": "0.1.0"
+}
