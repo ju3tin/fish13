@@ -5,10 +5,12 @@ import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { Program, AnchorProvider, BN, Idl } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
+import { clusterApiUrl, Connection } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token";
 import idl from "../../../idl/idl1.json"; // Replace with path to your IDL
 
 const programId = new PublicKey("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"); // Replace with your program ID
+const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
 export default function Home() {
   const { connection } = useConnection();
@@ -19,10 +21,18 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Initialize the Anchor Program
   const program = useMemo(() => {
+    // Ensure wallet is connected before creating provider
     if (!wallet) return null;
-    const provider = new AnchorProvider(connection, wallet, {});
-    return new Program(idl as unknown as Idl, programId, provider);
+
+    // Create AnchorProvider with connection and wallet
+    const provider = new AnchorProvider(connection, wallet, {
+      commitment: "confirmed",
+    });
+
+    // Initialize Program with correct argument order: idl, programId, provider
+    return new Program(idl as unknown as Idl, provider);
   }, [wallet, connection]);
 
   const initializePool = async () => {
@@ -30,6 +40,15 @@ export default function Home() {
       setMessage("Please connect your wallet");
       return;
     }
+
+    // Validate mintAddress
+    try {
+      new PublicKey(mintAddress);
+    } catch {
+      setMessage("Invalid token mint address");
+      return;
+    }
+
     setIsLoading(true);
     try {
       const [pool] = await PublicKey.findProgramAddress(
@@ -56,10 +75,18 @@ export default function Home() {
       setMessage("Please connect your wallet");
       return;
     }
-    if (!amount || isNaN(Number(amount))) {
+    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
       setMessage("Please enter a valid amount");
       return;
     }
+    // Validate mintAddress
+    try {
+      new PublicKey(mintAddress);
+    } catch {
+      setMessage("Invalid token mint address");
+      return;
+    }
+
     setIsLoading(true);
     try {
       const [pool] = await PublicKey.findProgramAddress(
@@ -106,6 +133,14 @@ export default function Home() {
       setMessage("Please connect your wallet");
       return;
     }
+    // Validate mintAddress
+    try {
+      new PublicKey(mintAddress);
+    } catch {
+      setMessage("Invalid token mint address");
+      return;
+    }
+
     setIsLoading(true);
     try {
       const [pool] = await PublicKey.findProgramAddress(
