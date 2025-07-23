@@ -5,7 +5,7 @@ import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { Program, AnchorProvider, BN, Idl } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token";
 import idl from "../../../idl/idl1.json"; // Replace with path to your IDL
 
 const programId = new PublicKey("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"); // Replace with your program ID
@@ -75,9 +75,11 @@ export default function Home() {
         programId
       );
 
-      // Replace with actual user token account and mint
-      const userTokenAccount = new PublicKey("YOUR_USER_TOKEN_ACCOUNT"); // Set up via spl-token
       const tokenMint = new PublicKey(mintAddress);
+      const userTokenAccount = await getAssociatedTokenAddress(
+        tokenMint,
+        wallet.publicKey
+      );
 
       await program.methods
         .stake(new BN(amount), { [lockupPeriod]: {} })
@@ -119,8 +121,11 @@ export default function Home() {
         programId
       );
 
-      // Replace with actual user token account
-      const userTokenAccount = new PublicKey("YOUR_USER_TOKEN_ACCOUNT");
+      const tokenMint = new PublicKey(mintAddress);
+      const userTokenAccount = await getAssociatedTokenAddress(
+        tokenMint,
+        wallet.publicKey
+      );
 
       await program.methods
         .unstake()
